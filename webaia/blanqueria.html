@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Productos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        nav {
+            margin: 20px 0;
+        }
+        nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+        .search-bar {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+        .search-bar input {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-bar button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+        .product-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        .product-info {
+            padding: 15px;
+            text-align: center;
+        }
+        .product-info h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .product-info p {
+            color: #666;
+        }
+        .product-info .price {
+            font-size: 1.4em;
+            color: #007bff;
+        }
+        .product-info .buy-btn, .product-info .mp-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        .buy-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .buy-btn:hover {
+            background-color: #218838;
+        }
+        .mp-btn {
+            background-color: #00aff0;
+            color: white;
+        }
+        .mp-btn:hover {
+            background-color: #007bbf;
+        }
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        .categories {
+            margin: 20px 0;
+            text-align: center;
+            background-color: #e9ecef; /* Fondo diferente para categorías */
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .category-link {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .category-link:hover {
+            color: #0056b3; /* Cambiar color al pasar el mouse */
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .modal-content {
+            margin: 5% auto;
+            display: block;
+            max-width: 80%;
+            max-height: 80%;
+        }
+        .modal-content img {
+            width: 100%;
+            height: auto;
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        @media (max-width: 600px) {
+            nav {
+                display: block;
+            }
+            nav a {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Electro A&A</h1>
+</header>
+
+<div class="container">
+    <h2>Nuestros Productos</h2>
+    <!-- Sección de categorías -->
+    <div class="categories">
+        <a href="index.html" class="category-link">Electrodomésticos</a>
+        <a href="bazar.html" class="category-link">Bazar</a>
+        <a href="blanqueria.html" class="category-link">Blanqueria</a> <!-- Enlace agregado -->
+    </div>
+    
+    <div class="product-grid" id="productGrid">
+        <!-- Aquí van los productos -->
+    </div>
+</div>
+
+<!-- Modal para la imagen -->
+<div id="imageModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="imgModal">
+</div>
+
+<footer>
+    <p>&copy; 2024 Tienda de Productos. Todos los derechos reservados.</p>
+    <a href="https://wa.me/5491170506548?text=%C2%A1Hola!%20Estoy%20interesado%20en%20su%20producto." target="_blank">
+        <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
+    </a>
+</footer>
+
+<script>
+    // Productos
+    const productos = [
+        { nombre: 'Sabanas 180 hilos', precio: '$16.000', img: 'sabana1.jpg', mp: 'https://mpago.la/2bffBky', wa: '' },
+        { nombre: 'Sabanas 180 hilos', precio: '$16.000', img: 'sabana2.jpg', mp: 'https://mpago.la/1ryXSck', wa: 'Producto 2' },
+        { nombre: 'Sabanas 180 hilos', precio: '$16.000', img: 'sabana3.jpg', mp: 'https://mpago.la/1ryXSck', wa: 'Producto 2' },
+        { nombre: 'Sabanas 180 hilos', precio: '$16.000', img: 'sabana4.jpg', mp: 'https://mpago.la/1ryXSck', wa: 'Producto 2' },
+        /* { nombre: 'Cacerola Antiadherente', precio: '$15.000', img: 'cacerola.jpg', mp: 'LINK_MERCADOPAGO_3', wa: 'Producto 3' },
+        { nombre: 'Exprimidor electrico', precio: '$24.000', img: 'exprimidora.jpg', mp: 'LINK_MERCADOPAGO_4', wa: 'Producto 4' },
+        { nombre: 'Camara Wi-Fi', precio: '$36.000', img: 'Camaraip.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Picadora Ultracomb', precio: '$53.000', img: 'picadora.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Picadora Yelmo', precio: '$55.000', img: 'picadorayelmo.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Set de Cocina', precio: '$50.000', img: 'setcocina.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Parlante Bluetooth LED', precio: '$40.000', img: 'parlante.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Aspiradora Ultracomb', precio: '$100.000', img: 'aspiradora.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Set de herramientas', precio: '$78.000', img: 'herramientas.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Secador de pelo Hytoshi', precio: '$25.000', img: 'secador1.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Secador de pelo', precio: '$25.000', img: 'secador2.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Camara de seguridad domo ', precio: '$48.000', img: 'camara2.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Freidora sin aceite Westinghouse', precio: '$90.000', img: 'Freidora.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Freidora con aceite', precio: '$78.000', img: 'Freidora2.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' },
+        { nombre: 'Gazebo plegable 3x3', precio: '$170.000', img: 'gacebo.jpg', mp: 'LINK_MERCADOPAGO_5', wa: 'Producto 5' }, */
+        // Agrega más productos aquí...
+    ];
+
+    const productGrid = document.getElementById('productGrid');
+
+    productos.forEach(producto => {
+        const productCard = `
+            <div class="product-card">
+                <img src="${producto.img}" alt="${producto.nombre}" class="product-image" onclick="openModal('${producto.img}')">
+                <div class="product-info">
+                    <h3>${producto.nombre}</h3>
+                    <p class="price">${producto.precio}</p>
+                    <a href="https://wa.me/5491170506548?text=Estoy%20interesado%20en%20comprar%20el%20${encodeURIComponent(producto.wa)}%20por%20${producto.precio}" target="_blank">
+                        <button class="buy-btn">Encarga tu producto</button>
+                    </a>
+                    <a href="${producto.mp}" target="_blank">
+                        <button class="mp-btn">Comprar por MercadoPago</button>
+                    </a>
+                </div>
+            </div>
+        `;
+        productGrid.innerHTML += productCard;
+    });
+
+    // Modal para mostrar imágenes en tamaño grande
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('imgModal');
+    const closeBtn = document.getElementsByClassName('close')[0];
+
+    function openModal(src) {
+        modal.style.display = 'block';
+        modalImg.src = src;
+    }
+
+    closeBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Función para buscar productos
+    function searchProducts() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            const title = card.querySelector('h3').textContent.toLowerCase();
+            if (title.includes(input)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
